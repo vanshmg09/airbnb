@@ -7,6 +7,9 @@
 </head>
 <body>
     <h3>All Listings</h3>
+    <form method="GET" action="/listings/new">
+        <button>Create New Listing</button>
+    </form>
     <ul>
         <% for(let listing of allListing){ %>
             <!--Show Route to show specific data (view)  -->

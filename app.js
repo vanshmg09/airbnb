@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
 
 const path = require("path");
+const { readdir } = require("fs");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -50,12 +51,31 @@ app.get("/listings", async (req, res) => {
     res.render("./listings/index.ejs", {allListing});
 });
 
+
+// New Route should placed before Show Route ,because it consider "new" as ":id"
+// New Route
+app.get("/listings/new", (req, res) => {
+    res.render("./listings/new");
+});
+
+
 // Show Route (Read)
 app.get("/listings/:id", async (req, res) => {
     let {id} = req.params;
     const listing = await Listing.findById(id);
     res.render("./listings/show.ejs", {listing});
+});
+
+// Create Route
+app.post("/listings", async(req, res) => {
+    // let {title, description, image, price, location, country} = req.body ;
+    // Another way ,Using object (Short way)
+    let listing = req.body.listing;
+    let newListing = new Listing(listing);
+    await newListing.save();
+    res.redirect("/listings");
 })
+
 
 app.listen(8080, () => {
     console.log("server is listening to port 8080");
