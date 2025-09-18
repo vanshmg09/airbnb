@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const mkongoose = require("mongoose");
+const mongoose = require("mongoose");
 // Require Listing model
 const Listing = require("./models/listing.js");
 
@@ -14,7 +14,7 @@ main()
     });
 
 async function main() {
-    await mkongoose.connect(MONGO_URL);
+    await mongoose.connect(MONGO_URL);
 }
 
 app.get("/", (req, res) => {
