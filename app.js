@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
 // To override the PUT and POST method of form
 const methodOverride = require("method-override");
+// Require ejs-mate
+const ejsMate = require("ejs-mate");
 
 const path = require("path");
 const { readdir } = require("fs");
@@ -29,6 +31,9 @@ app.set("views" , path.join(__dirname,"views"));
 app.use(express.urlencoded({extended: true}));
 // To override the PUT and POST method of form
 app.use(methodOverride("_method"));
+app.engine("ejs", ejsMate);
+// To use static file (public)
+app.use(express.static(path.join(__dirname,"/public")));
 
 
 app.get("/", (req, res) => {
