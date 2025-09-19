@@ -3,6 +3,8 @@ const app = express();
 const mongoose = require("mongoose");
 // Require Listing model
 const Listing = require("./models/listing.js");
+// To override the PUT and POST method of form
+const methodOverride = require("method-override");
 
 const path = require("path");
 const { readdir } = require("fs");
@@ -25,6 +27,8 @@ app.set("views" , path.join(__dirname,"views"));
 
 // To use "req.params" ; To parse the data that are arive in request
 app.use(express.urlencoded({extended: true}));
+// To override the PUT and POST method of form
+app.use(methodOverride("_method"));
 
 
 app.get("/", (req, res) => {
@@ -74,6 +78,21 @@ app.post("/listings", async(req, res) => {
     let newListing = new Listing(listing);
     await newListing.save();
     res.redirect("/listings");
+});
+
+// Edit Route
+app.get("/listings/:id/edit", async (req, res) => {
+    let {id} = req.params;
+    const listing = await Listing.findById(id);
+    res.render("./listings/edit.ejs", {listing});
+});
+
+// Update Route
+app.put("/listings/:id", async (req, res) => {
+    let {id} = req.params;
+    // " ... " Deconstrut the req.body.listing object into individual value
+    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    res.redirect(`/listings/${id}`);
 })
 
 
