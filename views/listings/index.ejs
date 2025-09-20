@@ -6,13 +6,26 @@
     <!-- <form method="GET" action="/listings/new">
         <button>Create New Listing</button>
     </form> -->
-    <ul>
+
+    <!-- div class=row is created for cards are arrange in row -->
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
         <% for(let listing of allListing){ %>
-            <!--Show Route to show specific data (view)  -->
-            <a href="/listings/<%= listing._id %>">
-                <li><%= listing.title %></li>
+            <a href="/listings/<%= listing._id %>" class="listing-link">
+                <div class="card col" >
+                    <img src="<%= listing.image %>" class="card-img-top" alt="listing_image" style="height: 20rem;" />
+                    <!-- "card-img-overlay" add for getting hover effect -->
+                    <div class="card-img-overlay"></div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <b><%= listing.title %></b> <br>
+                            &#x20B9;<%= listing.price.toLocaleString("en-IN") %> / night
+                        </p>
+                    </div>
+                </div>
             </a>
+            
         <% } %>
-    </ul>
+    </div>
+    
 </body>
 
