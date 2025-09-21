@@ -69,7 +69,7 @@ body{
 .card-img-top{
     border-radius: 1rem !important;
     width: 100% !important;
-    /* object-fit: contain !important; */
+    object-fit: cover !important;
 }
 
 .card-body{
@@ -104,4 +104,19 @@ body{
 .edit-btn {
     background-color: #fe424d !important;
     border: none !important;
+}
+
+/* Show Page */
+.show-img {
+    height: 30vh;
+    object-fit: cover;
+}
+
+.btns {
+    display: flex;
+}
+
+.show-card {
+    padding-left: 0;
+    padding-right: 0;
 }
