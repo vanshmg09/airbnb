@@ -7,6 +7,8 @@ const Listing = require("./models/listing.js");
 const methodOverride = require("method-override");
 // Require ejs-mate
 const ejsMate = require("ejs-mate");
+// Require wrapAsync
+const wrapAsync = require("./utils/wrapAsyc.js");
 
 const path = require("path");
 const { readdir } = require("fs");
@@ -76,19 +78,15 @@ app.get("/listings/:id", async (req, res) => {
 });
 
 // Create Route
-app.post("/listings", async(req, res, next) => {
+app.post("/listings", wrapAsync(async(req, res, next) => {
     // let {title, description, image, price, location, country} = req.body ;
     // Another way ,Using object (Short way)
-    try{
         let listing = req.body.listing;
         let newListing = new Listing(listing);
         await newListing.save();
         res.redirect("/listings");
-    }catch(err){
-        next(err);
-    }
     
-});
+}));
 
 // Edit Route
 app.get("/listings/:id/edit", async (req, res) => {
