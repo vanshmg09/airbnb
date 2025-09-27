@@ -62,6 +62,19 @@ app.get("/", (req, res) => {
 //     res.send("successfully testing");
 // });
 
+
+// Joi Validation as function (as Middelware)
+const validateListing = (req,res,next) => {
+    //Server side validation using "Joi" 
+    let {error} = listingSchema.validate(req.body);
+    if(error){
+        let errMsg = error.details.map((el) => el.message).join(",");
+        throw new ExpressError(400, errMsg);
+    }else{
+        next();
+    }
+}
+
 // Index Route
 app.get("/listings", wrapAsync(async (req, res) => {
     const allListing = await Listing.find({});
@@ -84,13 +97,7 @@ app.get("/listings/:id", wrapAsync(async (req, res) => {
 }));
 
 // Create Route
-app.post("/listings", wrapAsync(async(req, res, next) => {
-//Server side validation using "Joi" 
-    let result = listingSchema.validate(req.body);
-    console.log(result);
-    if(result.error){
-        throw new ExpressError(404, result.error);
-    }
+app.post("/listings",validateListing, wrapAsync(async(req, res, next) => {
     // Check req.boby.listing is empty or not
     if(!req.body.listing){
             throw new ExpressError(400, "Send valid data for listing");
@@ -130,10 +137,7 @@ app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
 }));
 
 // Update Route
-app.put("/listings/:id", wrapAsync(async (req, res) => {
-    if(!req.body.listing){
-        throw new ExpressError(400, "Send valid data for listing");
-    }
+app.put("/listings/:id",validateListing, wrapAsync(async (req, res) => {
     let {id} = req.params;
     // " ... " Deconstrut the req.body.listing object into individual value
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
