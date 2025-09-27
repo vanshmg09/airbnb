@@ -11,6 +11,8 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsyc.js");
 // Require ExpressError
 const ExpressError = require("./utils/ExpressError.js");
+// Require listingSchema for server side validation
+const {listingSchema} = require("./schema.js")
 
 
 const path = require("path");
@@ -83,13 +85,38 @@ app.get("/listings/:id", wrapAsync(async (req, res) => {
 
 // Create Route
 app.post("/listings", wrapAsync(async(req, res, next) => {
+//Server side validation using "Joi" 
+    let result = listingSchema.validate(req.body);
+    console.log(result);
+    if(result.error){
+        throw new ExpressError(404, result.error);
+    }
+    // Check req.boby.listing is empty or not
+    if(!req.body.listing){
+            throw new ExpressError(400, "Send valid data for listing");
+    }
     // let {title, description, image, price, location, country} = req.body ;
     // Another way ,Using object (Short way)
-        if(!req.body.listing){
-            throw new ExpressError(400, "Send valid data for listing");
-        }
         let listing = req.body.listing;
         let newListing = new Listing(listing);
+
+// One by one check for server side validation
+    // if(!newListing.title){
+    //         throw new ExpressError(400, "Title is missing");
+    // }
+    // if(!newListing.description){
+    //         throw new ExpressError(400, "Decription is missing");
+    // }
+    // if(!newListing.price){
+    //         throw new ExpressError(400, "Price is missing");
+    // }
+    // if(!newListing.country){
+    //         throw new ExpressError(400, "Country is missing");
+    // }
+    // if(!newListing.location){
+    //         throw new ExpressError(400, "Location is missing");
+    // }
+    
         await newListing.save();
         res.redirect("/listings");
     
