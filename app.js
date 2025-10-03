@@ -13,7 +13,8 @@ const wrapAsync = require("./utils/wrapAsyc.js");
 const ExpressError = require("./utils/ExpressError.js");
 // Require listingSchema for server side validation
 const {listingSchema} = require("./schema.js")
-
+// Require Review Model
+const Review = require("./models/review.js");
 
 const path = require("path");
 const { readdir } = require("fs");
@@ -151,6 +152,20 @@ app.delete("/listings/:id", wrapAsync(async (req, res) => {
     console.log(deletedListing);
     res.redirect("/listings");
 }));
+
+// Review
+// POST Route
+app.post("/listings/:id/reviews", async (req,res) => {
+    let listing = await Listing.findById(req.params.id);
+    let newReview = new Review(req.body.review);
+
+    listing.reviews.push(newReview);
+
+    await newReview.save();
+    await listing.save();
+
+    res.redirect(`/listings/${listing._id}`);
+})
 
 // If request are not map with above route then it map with this route (Any reqest map with this route)
 app.all(/.*/,(req, res, next) => {
