@@ -11,8 +11,8 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsyc.js");
 // Require ExpressError
 const ExpressError = require("./utils/ExpressError.js");
-// Require listingSchema for server side validation
-const {listingSchema} = require("./schema.js")
+// Require listingSchema & reviewSchema for server side validation
+const {listingSchema, reviewSchema} = require("./schema.js")
 // Require Review Model
 const Review = require("./models/review.js");
 
@@ -68,6 +68,17 @@ app.get("/", (req, res) => {
 const validateListing = (req,res,next) => {
     //Server side validation using "Joi" 
     let {error} = listingSchema.validate(req.body);
+    if(error){
+        let errMsg = error.details.map((el) => el.message).join(",");
+        throw new ExpressError(400, errMsg);
+    }else{
+        next();
+    }
+}
+
+const validateReview = (req,res,next) => {
+    //Server side validation using "Joi" 
+    let {error} = reviewSchema.validate(req.body);
     if(error){
         let errMsg = error.details.map((el) => el.message).join(",");
         throw new ExpressError(400, errMsg);
@@ -155,7 +166,7 @@ app.delete("/listings/:id", wrapAsync(async (req, res) => {
 
 // Review
 // POST Route
-app.post("/listings/:id/reviews", async (req,res) => {
+app.post("/listings/:id/reviews", validateReview, wrapAsync( async (req,res) => {
     let listing = await Listing.findById(req.params.id);
     let newReview = new Review(req.body.review);
 
@@ -165,7 +176,7 @@ app.post("/listings/:id/reviews", async (req,res) => {
     await listing.save();
 
     res.redirect(`/listings/${listing._id}`);
-})
+}));
 
 // If request are not map with above route then it map with this route (Any reqest map with this route)
 app.all(/.*/,(req, res, next) => {
