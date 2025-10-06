@@ -2,22 +2,24 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 // Require Listing model
-const Listing = require("./models/listing.js");
+// const Listing = require("./models/listing.js");
 // To override the PUT and POST method of form
 const methodOverride = require("method-override");
 // Require ejs-mate
 const ejsMate = require("ejs-mate");
-// Require wrapAsync
-const wrapAsync = require("./utils/wrapAsyc.js");
+// Require wrapAsync(now not needed ; Express Router)
+// const wrapAsync = require("./utils/wrapAsyc.js");
 // Require ExpressError
 const ExpressError = require("./utils/ExpressError.js");
-// Require listingSchema & reviewSchema for server side validation
-const {listingSchema, reviewSchema} = require("./schema.js")
+// Require listingSchema & reviewSchema for server side validation(now not needed ; Express Router)
+// const {listingSchema, reviewSchema} = require("./schema.js")
 // Require Review Model
 const Review = require("./models/review.js");
 
 // To require Listing Route
 const listings = require("./routes/listing.js");
+// To require Listing Route
+const reviews = require("./routes/review.js");
 
 const path = require("path");
 const { readdir } = require("fs");
@@ -69,45 +71,12 @@ app.get("/", (req, res) => {
 
 
 
-const validateReview = (req,res,next) => {
-    //Server side validation using "Joi" 
-    let {error} = reviewSchema.validate(req.body);
-    if(error){
-        let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400, errMsg);
-    }else{
-        next();
-    }
-}
-
 // To use Listing Route
-app.use("/listings", listings)
-
-// Review
-// Post Review Route
-app.post("/listings/:id/reviews", validateReview, wrapAsync( async (req,res) => {
-    let listing = await Listing.findById(req.params.id);
-    let newReview = new Review(req.body.review);
-
-    listing.reviews.push(newReview);
-
-    await newReview.save();
-    await listing.save();
-
-    res.redirect(`/listings/${listing._id}`);
-}));
+app.use("/listings", listings);
+// To use Review Route
+app.use("/listings/:id/reviews", reviews);
 
 
-// Delete Review Route
-app.delete("/listings/:id/reviews/:reviewId", wrapAsync( async (req, res) => {
-    let { id, reviewId } = req.params;
-
-    // " $pull " used to remove (Remove reviewId from Listing model)
-    await Listing.findByIdAndUpdate(id, {$pull : {reviews : reviewId}});
-    await Review.findByIdAndDelete(reviewId);
-
-    res.redirect(`/listings/${id}`);
-}));
 
 // If request are not map with above route then it map with this route (Any reqest map with this route)
 app.all(/.*/,(req, res, next) => {
