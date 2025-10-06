@@ -16,6 +16,9 @@ const {listingSchema, reviewSchema} = require("./schema.js")
 // Require Review Model
 const Review = require("./models/review.js");
 
+// To require Listing Route
+const listings = require("./routes/listing.js");
+
 const path = require("path");
 const { readdir } = require("fs");
 const { clear } = require("console");
@@ -65,17 +68,6 @@ app.get("/", (req, res) => {
 // });
 
 
-// Joi Validation as function (as Middelware)
-const validateListing = (req,res,next) => {
-    //Server side validation using "Joi" 
-    let {error} = listingSchema.validate(req.body);
-    if(error){
-        let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400, errMsg);
-    }else{
-        next();
-    }
-}
 
 const validateReview = (req,res,next) => {
     //Server side validation using "Joi" 
@@ -88,82 +80,8 @@ const validateReview = (req,res,next) => {
     }
 }
 
-// Index Route
-app.get("/listings", wrapAsync(async (req, res) => {
-    const allListing = await Listing.find({});
-    res.render("./listings/index.ejs", {allListing});
-}));
-
-
-// New Route should placed before Show Route ,because it consider "new" as ":id"
-// New Route
-app.get("/listings/new", (req, res) => {
-    res.render("./listings/new");
-});
-
-
-// Show Route (Read)
-app.get("/listings/:id", wrapAsync(async (req, res) => {
-    let {id} = req.params;
-    const listing = await Listing.findById(id).populate("reviews");
-    res.render("./listings/show.ejs", {listing});
-}));
-
-// Create Route
-app.post("/listings",validateListing, wrapAsync(async(req, res, next) => {
-    // Check req.boby.listing is empty or not
-    if(!req.body.listing){
-            throw new ExpressError(400, "Send valid data for listing");
-    }
-    // let {title, description, image, price, location, country} = req.body ;
-    // Another way ,Using object (Short way)
-        let listing = req.body.listing;
-        let newListing = new Listing(listing);
-
-// One by one check for server side validation
-    // if(!newListing.title){
-    //         throw new ExpressError(400, "Title is missing");
-    // }
-    // if(!newListing.description){
-    //         throw new ExpressError(400, "Decription is missing");
-    // }
-    // if(!newListing.price){
-    //         throw new ExpressError(400, "Price is missing");
-    // }
-    // if(!newListing.country){
-    //         throw new ExpressError(400, "Country is missing");
-    // }
-    // if(!newListing.location){
-    //         throw new ExpressError(400, "Location is missing");
-    // }
-    
-        await newListing.save();
-        res.redirect("/listings");
-    
-}));
-
-// Edit Route
-app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
-    let {id} = req.params;
-    const listing = await Listing.findById(id);
-    res.render("./listings/edit.ejs", {listing});
-}));
-
-// Update Route
-app.put("/listings/:id",validateListing, wrapAsync(async (req, res) => {
-    let {id} = req.params;
-    // " ... " Deconstrut the req.body.listing object into individual value
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-    res.redirect(`/listings/${id}`);
-}));
-
-// Delete Route
-app.delete("/listings/:id", wrapAsync(async (req, res) => {
-    let {id} = req.params;
-    let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
-    res.redirect("/listings");
-}));
+// To use Listing Route
+app.use("/listings", listings)
 
 // Review
 // Post Review Route
