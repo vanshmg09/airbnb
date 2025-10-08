@@ -6,8 +6,17 @@ const posts = require("./routes/post.js");
 const cookieParser = require("cookie-parser");
 
 // To use cookie-parser
-app.use(cookieParser());
+app.use(cookieParser("secretcode"));
 
+app.get("/getsignedcookies", (req,res) => {
+    res.cookie("made-in","India", {signed: true});
+    res.send("signed cookie sent");
+});
+
+app.get("/verify", (req,res) => {
+    console.log(req.signedCookies);
+    res.send("verified");
+})
 
 app.get("/getcookies", (req,res) => {
     res.cookie("greet","hello");
