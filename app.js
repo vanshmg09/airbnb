@@ -15,6 +15,8 @@ const ExpressError = require("./utils/ExpressError.js");
 // const {listingSchema, reviewSchema} = require("./schema.js")
 // Require Review Model
 const Review = require("./models/review.js");
+// To Require express-session
+const session = require("express-session");
 
 // To require Listing Route
 const listings = require("./routes/listing.js");
@@ -49,6 +51,16 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 // To use static file (public)
 app.use(express.static(path.join(__dirname,"/public")));
+
+// Session Option
+const sessionOptions = {
+    secret: "mysupersecretecode",
+    resave: false,
+    saveUninitialized: true
+};
+
+// To use session
+app.use(session(sessionOptions));
 
 
 app.get("/", (req, res) => {
