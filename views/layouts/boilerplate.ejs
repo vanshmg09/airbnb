@@ -16,7 +16,12 @@
 <body>
     <%- include("../includes/navbar.ejs") %>
     <!-- To change the contain   -->
-    <div class="container"><%- body %></div>
+    <div class="container">
+        <!-- flash message -->
+        <%- include("../includes/flash.ejs") %>
+        
+        <%- body %>
+    </div>
 
     <%- include("../includes/footer.ejs") %>
 
