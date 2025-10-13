@@ -17,6 +17,8 @@ const ExpressError = require("./utils/ExpressError.js");
 const Review = require("./models/review.js");
 // To Require express-session
 const session = require("express-session");
+// To Require connect-flash
+const flash = require("connect-flash");
 
 // To require Listing Route
 const listings = require("./routes/listing.js");
@@ -66,6 +68,13 @@ const sessionOptions = {
 
 // To use session
 app.use(session(sessionOptions));
+//  To use flash
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    next();
+})
 
 
 app.get("/", (req, res) => {
