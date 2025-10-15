@@ -19,6 +19,12 @@ const Review = require("./models/review.js");
 const session = require("express-session");
 // To Require connect-flash
 const flash = require("connect-flash");
+// To require passport
+const passport = require("passport");
+// To require passport-local
+const LocalStrategy = require("passport-local");
+// To require user model
+const User = require("./models/user.js");
 
 // To require Listing Route
 const listings = require("./routes/listing.js");
@@ -70,6 +76,13 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 //  To use flash
 app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
