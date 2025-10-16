@@ -41,11 +41,12 @@ router.get("/new",isLoggedIn, (req, res) => {
 // Show Route (Read)
 router.get("/:id", wrapAsync(async (req, res) => {
     let {id} = req.params;
-    const listing = await Listing.findById(id).populate("reviews");
+    const listing = await Listing.findById(id).populate("reviews").populate("owner");
     if(!listing) {
         req.flash("error", "Listing you requested for does not exist!");
         res.redirect("/listings");
     }else{
+        console.log(listing);
         res.render("./listings/show.ejs", {listing});
     }
     
@@ -61,6 +62,7 @@ router.post("/",isLoggedIn, validateListing, wrapAsync(async(req, res, next) => 
     // Another way ,Using object (Short way)
         let listing = req.body.listing;
         let newListing = new Listing(listing);
+        newListing.owner = req.user._id;
 
 // One by one check for server side validation
     // if(!newListing.title){
