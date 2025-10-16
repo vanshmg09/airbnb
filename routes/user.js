@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user.js");
 const wrapAsyc = require("../utils/wrapAsyc.js");
+const passport = require("passport");
 
 router.get("/signup", (req, res) => {
     res.render("users/signup.ejs");
@@ -20,5 +21,15 @@ router.post("/signup", wrapAsyc(async (req, res) => {
         res.redirect("/signup");
     }
 }));
+
+router.get("/login", (req, res) => {
+    res.render("users/login.ejs");
+});
+
+// passport.authenticate() is Middleware
+router.post("/login", passport.authenticate("local",{ failureRedirect: '/login' , failureFlash: true}), async (req, res) => {
+    req.flash("success", "Welcome back to Wanderlust!");
+    res.redirect("/listings");
+});
 
 module.exports = router;
