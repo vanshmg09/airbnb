@@ -11,12 +11,12 @@ const Listing = require("../models/listing.js");
 // To require isLoggedIn,isOwner function (As Middelware)
 const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 
+// To Require listingController
+const listingController = require("../controllers/listings.js");
+
 
 // Index Route
-router.get("/", wrapAsync(async (req, res) => {
-    const allListing = await Listing.find({});
-    res.render("./listings/index.ejs", {allListing});
-}));
+router.get("/", wrapAsync(listingController.index));
 
 
 // New Route should placed before Show Route ,because it consider "new" as ":id"
