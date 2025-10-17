@@ -11,7 +11,7 @@ const Review = require("../models/review.js");
 // Require Listing model
 const Listing = require("../models/listing.js");
 // To require isLoggedIn,isOwner function (As Middelware)
-const { validateReview, isLoggedIn } = require("../middleware.js");
+const { validateReview, isLoggedIn, isReviewAutor } = require("../middleware.js");
 
 
 
@@ -33,7 +33,7 @@ router.post("/",isLoggedIn, validateReview, wrapAsync( async (req,res) => {
 
 
 // Delete Review Route
-router.delete("/:reviewId", wrapAsync( async (req, res) => {
+router.delete("/:reviewId",isLoggedIn,isReviewAutor, wrapAsync( async (req, res) => {
     let { id, reviewId } = req.params;
 
     // " $pull " used to remove (Remove reviewId from Listing model)

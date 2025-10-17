@@ -5,6 +5,8 @@ const ExpressError = require("./utils/ExpressError.js");
 // Require listingSchema & reviewSchema for server side validation
 const { listingSchema } = require("./schema.js");
 const {reviewSchema} = require("./schema.js");
+// Require Review Model
+const Review = require("./models/review.js");
 
 module.exports.isLoggedIn = (req, res, next) => {
     // redirectUrl save
@@ -57,4 +59,14 @@ module.exports.validateReview = (req,res,next) => {
     }else{
         next();
     }
+}
+
+module.exports.isReviewAutor = async (req, res, next) => {
+    let {reviewId, id} = req.params;
+    let review = await Review.findById(reviewId);
+    if(! review.author._id.equals(res.locals.currUser._id)){
+        req.flash("error", "You are not the author of this review");
+        return res.redirect(`/listings/${id}`);
+    }
+    next();
 }
