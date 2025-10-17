@@ -5,24 +5,15 @@ const router = express.Router({mergeParams: true});
 const wrapAsync = require("../utils/wrapAsyc.js");
 // Require ExpressError
 const ExpressError = require("../utils/ExpressError.js");
-const {reviewSchema} = require("../schema.js")
+
 // Require Review Model
 const Review = require("../models/review.js");
 // Require Listing model
 const Listing = require("../models/listing.js");
+// To require isLoggedIn,isOwner function (As Middelware)
+const { validateReview } = require("../middleware.js");
 
 
-// Joi Validation as function (as Middelware)
-const validateReview = (req,res,next) => {
-    //Server side validation using "Joi" 
-    let {error} = reviewSchema.validate(req.body);
-    if(error){
-        let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400, errMsg);
-    }else{
-        next();
-    }
-}
 
 // Review
 // Post Review Route
