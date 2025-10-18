@@ -13,13 +13,20 @@ const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 
 // To Require listingController
 const listingController = require("../controllers/listings.js");
+// To Require multer(upload image)
+const multer  = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 // "router.route" compact way of writting route
 router.route("/")
     // Index Route
     .get( wrapAsync(listingController.index))
     // Create Route
-    .post( isLoggedIn, validateListing, wrapAsync(listingController.createListing));
+    // .post( isLoggedIn, validateListing, wrapAsync(listingController.createListing));
+    .post(upload.single('listing[image]') ,(req, res) => {
+            res.send(req.file);
+            console.log(req.file);
+    });
 
 
 // New Route should placed before Show Route ,because it consider "new" as ":id"
