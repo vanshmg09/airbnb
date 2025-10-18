@@ -24,7 +24,7 @@ router.route("/")
     // Index Route
     .get( wrapAsync(listingController.index))
     // Create Route
-    .post( isLoggedIn, validateListing,upload.single('listing[image]'), wrapAsync(listingController.createListing));
+    .post( isLoggedIn, upload.single('listing[image]'),validateListing, wrapAsync(listingController.createListing));
 
 
 // New Route should placed before Show Route ,because it consider "new" as ":id"
@@ -36,7 +36,7 @@ router.route("/:id")
     // Show Route (Read)
     .get( wrapAsync(listingController.showListing))
     // Update Route
-    .put(isLoggedIn,isOwner, validateListing, wrapAsync(listingController.updateListing))
+    .put(isLoggedIn, isOwner, upload.single('listing[image]'), validateListing, wrapAsync(listingController.updateListing))
     // Delete Route
     .delete(isLoggedIn,isOwner, wrapAsync(listingController.destroyListing));
 
