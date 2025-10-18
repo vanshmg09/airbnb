@@ -24,11 +24,7 @@ router.route("/")
     // Index Route
     .get( wrapAsync(listingController.index))
     // Create Route
-    // .post( isLoggedIn, validateListing, wrapAsync(listingController.createListing));
-    .post(upload.single('listing[image]') ,(req, res) => {
-            res.send(req.file);
-            console.log(req.file);
-    });
+    .post( isLoggedIn, validateListing,upload.single('listing[image]'), wrapAsync(listingController.createListing));
 
 
 // New Route should placed before Show Route ,because it consider "new" as ":id"

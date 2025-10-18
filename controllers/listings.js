@@ -29,15 +29,20 @@ module.exports.showListing = async (req, res) => {
 
 // Create Route Callback
 module.exports.createListing = async(req, res, next) => {
+
     // Check req.boby.listing is empty or not
     if(!req.body.listing){
             throw new ExpressError(400, "Send valid data for listing");
     }
+
+    let url = req.file.path;
+    let filename = req.file.filename;
     // let {title, description, image, price, location, country} = req.body ;
     // Another way ,Using object (Short way)
         let listing = req.body.listing;
         let newListing = new Listing(listing);
         newListing.owner = req.user._id;
+        newListing.image = {url, filename};
 
 // One by one check for server side validation
     // if(!newListing.title){
