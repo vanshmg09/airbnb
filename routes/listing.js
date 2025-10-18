@@ -14,9 +14,12 @@ const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 // To Require listingController
 const listingController = require("../controllers/listings.js");
 
-
-// Index Route
-router.get("/", wrapAsync(listingController.index));
+// "router.route" compact way of writting route
+router.route("/")
+    // Index Route
+    .get( wrapAsync(listingController.index))
+    // Create Route
+    .post( isLoggedIn, validateListing, wrapAsync(listingController.createListing));
 
 
 // New Route should placed before Show Route ,because it consider "new" as ":id"
@@ -24,19 +27,17 @@ router.get("/", wrapAsync(listingController.index));
 router.get("/new",isLoggedIn, listingController.renderNewForm);
 
 
-// Show Route (Read)
-router.get("/:id", wrapAsync(listingController.showListing));
+router.route("/:id")
+    // Show Route (Read)
+    .get( wrapAsync(listingController.showListing))
+    // Update Route
+    .put(isLoggedIn,isOwner, validateListing, wrapAsync(listingController.updateListing))
+    // Delete Route
+    .delete(isLoggedIn,isOwner, wrapAsync(listingController.destroyListing));
 
-// Create Route
-router.post("/",isLoggedIn, validateListing, wrapAsync(listingController.createListing));
 
 // Edit Route
 router.get("/:id/edit", isLoggedIn,isOwner, wrapAsync(listingController.renderEditForm));
 
-// Update Route
-router.put("/:id",isLoggedIn,isOwner, validateListing, wrapAsync(listingController.updateListing));
-
-// Delete Route
-router.delete("/:id",isLoggedIn,isOwner, wrapAsync(listingController.destroyListing));
 
 module.exports = router;
