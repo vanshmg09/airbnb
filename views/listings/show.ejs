@@ -32,8 +32,8 @@
 
 
     <div class="col-8 offset-3 mb-3">
-        <hr>
         <% if(currUser){ %>
+        <hr>
         <h4>Leave a Review</h4>
         <form action="/listings/<%= listing.id %>/reviews" method="POST" novalidate class="needs-validation">
             <!-- <div class="mt-3 mb-3">
@@ -71,9 +71,9 @@
 
         
 
-    <p><b>All Reviews</b></p>
-    
+    <% if(listing.reviews.lenght > 0 ) { %>
     <div class="row">
+        <p><b>All Reviews</b></p>
     <% for(review of listing.reviews){ %>
         <div class="card col-5 ms-3 mb-3">
             <div class="card-body">
@@ -87,7 +87,18 @@
         </div>
     <% } %>
     </div>
+    <% } %>
+    </div>
+    <!-- Map div -->
+    <div class="col-8 offset-3 mb-3">
+        <h3>Where you'll be</h3>
+
+             <div id="map"></div>
+
+         </div>
+
     </div>
  </div>
-    
 
+ <!-- JS for Map -->
+<script src="/js/map.js"></script>
