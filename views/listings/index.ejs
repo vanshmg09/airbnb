@@ -76,6 +76,12 @@
             <p>Arctic</p>
         </div>
         
+        <div class="tax-toggle">
+            <div class="form-check-reverse form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+                <label class="form-check-label" for="switchCheckDefault">Display total after taxes</label>
+            </div>
+        </div>
     </div>
 
     <!-- div class=row is created for cards are arrange in row -->
@@ -100,3 +106,9 @@
     
 </body>
 
+<script>
+    let taxSwitch = document.getElementById("switchCheckDefault");
+    taxSwitch.addEventListener("click", () => {
+        console.log("clicked");
+    })
+</script>
